@@ -1,0 +1,122 @@
+name: Approve Publish (comment)
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: read
+
+jobs:
+  approve:
+    if: contains(github.event.comment.body, '/approve-publish')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read issue via API
+        id: issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner, repo, issue_number} = context.issue;
+            const {data: issue} = await github.rest.issues.get({owner, repo, issue_number});
+            core.setOutput('body', JSON.stringify(issue.body));
+            core.setOutput('title', issue.title);
+            core.setOutput('labels', issue.labels.map(l => (typeof l === 'string'? l : l.name)).join(','));
+            core.setOutput('id', issue_number.toString());
+
+      - name: Parse form fields
+        id: parse
+        run: |
+          body=$(jq -r -n --arg t "${{ steps.issue.outputs.body }}" '$t')
+          # GitHub Issue Forms ukladá odpovede do markdownu. Vytiahneme kľúčové polia regexmi.
+          grab() { echo "$body" | sed -n "s/^.*$1.*: *\([^\\r\\n]*\).*$/\\1/p" | head -n1; }
+          kind=$(grab "Typ")
+          ident=$(grab "Identifikátor")
+          lang=$(grab "Jazyk")
+          srepo=$(grab "Zdrojový repo")
+          sref=$(grab "Zdrojový ref")
+          spath=$(grab "Zdrojový priečinok"); [ -z "$spath" ] && spath="public/"
+          echo "kind=$kind"   >> $GITHUB_OUTPUT
+          echo "ident=$ident" >> $GITHUB_OUTPUT
+          echo "lang=$lang"   >> $GITHUB_OUTPUT
+          echo "srepo=$srepo" >> $GITHUB_OUTPUT
+          echo "sref=$sref"   >> $GITHUB_OUTPUT
+          echo "spath=$spath" >> $GITHUB_OUTPUT
+
+      - name: Safety checks
+        run: |
+          [[ "${{ steps.parse.outputs.ident }}" =~ ^(ST|PRJ)[0-9]{3}$ ]] || { echo "Bad identifier"; exit 1; }
+          [[ "${{ steps.parse.outputs.lang }}" =~ ^(sk|en)$ ]] || { echo "Bad lang"; exit 1; }
+
+      - name: Checkout TARGET repo
+        uses: actions/checkout@v4
+
+      - name: Checkout SOURCE repo
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ steps.parse.outputs.srepo }}
+          ref: ${{ steps.parse.outputs.sref }}
+          token: ${{ secrets.COURSE_PUBLISH_TOKEN }}
+          path: _source
+
+      - name: Validate and stage files
+        run: |
+          set -e
+          SRC="_source/${{ steps.parse.outputs.spath }}"
+          test -d "$SRC" || (echo "Source path not found: $SRC" && exit 1)
+          # Allowlist + size check
+          mkdir -p _staging
+          find "$SRC" -type f | while read -r f; do
+            case "$f" in
+              *.md|*.markdown|*.png|*.jpg|*.jpeg|*.gif|*.pdf) : ;;
+              *) echo "Blocked file type: $f" && exit 2 ;;
+            esac
+            sz=$(stat -c%s "$f" 2>/dev/null || stat -f%z "$f")
+            [ "$sz" -le 15728640 ] || { echo "File too large (>15MB): $f"; exit 3; }
+            # normalize line endings for md
+            if echo "$f" | grep -qiE '\.md$|\.markdown$'; then
+              sed 's/\r$//' "$f" > "_staging/$(basename "$f")"
+            else
+              cp "$f" "_staging/"
+            fi
+          done
+
+          # Decide target dir
+          if [[ "${{ steps.parse.outputs.ident }}" =~ ^ST ]]; then
+            TARGET="docs/${{ steps.parse.outputs.lang }}/students/${{ steps.parse.outputs.ident }}"
+          else
+            TARGET="docs/${{ steps.parse.outputs.lang }}/projects/${{ steps.parse.outputs.ident }}"
+          fi
+          mkdir -p "$TARGET"
+          # If there is a single MD, rename to index.md; otherwise keep names
+          mdcount=$(ls _staging/*.md 2>/dev/null | wc -l | tr -d ' ')
+          if [ "$mdcount" = "1" ]; then
+            mv _staging/*.md "$TARGET/index.md"
+          fi
+          # Copy rest
+          rsync -a --exclude 'index.md' _staging/ "$TARGET/"
+
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Publish ${{ steps.parse.outputs.ident }} from ${{ steps.parse.outputs.srepo }}@${{ steps.parse.outputs.sref }}"
+          title: "Publish: ${{ steps.parse.outputs.ident }} (${{ steps.parse.outputs.lang }})"
+          body: |
+            Auto-generated from issue #${{ steps.issue.outputs.id }}.
+            Source: `${{ steps.parse.outputs.srepo }}@${{ steps.parse.outputs.sref }}` (path `${{ steps.parse.outputs.spath }}`)
+            Target: `docs/${{ steps.parse.outputs.lang }}/${{ startsWith(steps.parse.outputs.ident, 'ST') && 'students' || 'projects' }}/${{ steps.parse.outputs.ident }}`
+          branch: "publish/${{ steps.parse.outputs.ident }}-${{ github.run_id }}"
+          base: "main"
+
+      - name: React on issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssue({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              content: 'rocket'
+            });

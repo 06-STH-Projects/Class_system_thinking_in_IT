@@ -1,3 +1,4 @@
-# Welcome to the KNIFE Documentation
+# STHDF 2025–2026 — verejné výstupy
 
-This is the home page.
+- [Študenti](students/_index.md)
+- [Projekty](projects/_index.md)

@@ -3,14 +3,14 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'KNIFE Preview - Knowledge in Friendly Examples',
+  title: 'System Thinking in IT and Digital Fabrication -Driven by  KNIFE Framework (- Knowledge in Friendly Examples)',
   tagline: 'Context Aware Approach',
-  url: 'https://knife-framework.github.io/',
-  baseUrl: '/knifes_overview/',
+  url: 'https://06-STH-Projects.github.io/',
+  baseUrl: '/Class_system_thinking_in_IT/',
   favicon: 'img/favicon.ico',
 
-  organizationName: 'KNIFE-Framework',
-  projectName: 'knifes_overview',
+  organizationName: '06-STH-Projects-Framework',
+  projectName: 'Class_system_thinking_in_IT',
   deploymentBranch: 'gh-pages', // voliteľné, ale fajn mať
   // Viac priateľské defaulty počas migrácie
   onBrokenLinks: 'warn',
@@ -62,7 +62,7 @@ const config: Config = {
         { to: '/', label: 'Home', position: 'left' },
         { to: '/docs/sk', label: 'Docs (SK)', position: 'left' },
         { to: '/docs/en', label: 'Docs (EN)', position: 'left' },
-        { href: 'https://github.com/KNIFE-Framework/knifes_overview', label: 'GitHub', position: 'right' },
+        { href: 'https://github.com/06-STH-Projects/Class_system_thinking_in_IT', label: 'GitHub', position: 'right' },
       ],
     },
     footer: {
