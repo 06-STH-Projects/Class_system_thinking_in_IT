@@ -1,3 +1,4 @@
+// PROJECT: class_system_thinking_in_it (PROD @ sthdf.systemthinking.sk)
 import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
@@ -5,8 +6,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'System Thinking in IT and Digital Fabrication -Driven by  KNIFE Framework (- Knowledge in Friendly Examples)',
   tagline: 'Context Aware Approach',
-  url: 'https://06-STH-Projects.github.io/',
-  baseUrl: '/Class_system_thinking_in_IT/',
+  url: 'https://sthdf.systemthinking.sk',
+  baseUrl: '/',
   favicon: 'img/favicon.ico',
 
   organizationName: '06-STH-Projects-Framework',
@@ -27,7 +28,6 @@ const config: Config = {
       },
       sk: {
         label: 'Slovensky',
-        path: 'sk',
       },
     },
   },
@@ -57,12 +57,12 @@ const config: Config = {
     image: 'img/logo.png',
     navbar: {
       title: 'KNIFE',
-      logo: { alt: 'KNIFE Logo', src: 'img/logo.png', href: '/', target: '_self' },
+      logo: { alt: 'KNIFE Logo', src: 'img/logo.png' },
       items: [
         { to: '/', label: 'Home', position: 'left' },
-        { to: '/docs/sk', label: 'Docs (SK)', position: 'left' },
-        { to: '/docs/en', label: 'Docs (EN)', position: 'left' },
-        { href: 'https://sthdf.systemthinking.sk', label: 'GitHub', position: 'right' },
+        { to: '/docs', label: 'Docs (SK)', position: 'left' },
+        { to: '/en/docs', label: 'Docs (EN)', position: 'left' },
+        { href: 'https://github.com/06-STH-Projects-Framework/Class_system_thinking_in_IT', label: 'GitHub', position: 'right' },
       ],
     },
     footer: {
