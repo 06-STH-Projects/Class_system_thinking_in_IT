@@ -62,7 +62,7 @@ const config: Config = {
         { to: '/', label: 'Home', position: 'left' },
         { to: '/docs/sk', label: 'Docs (SK)', position: 'left' },
         { to: '/docs/en', label: 'Docs (EN)', position: 'left' },
-        { href: 'https://github.com/06-STH-Projects/Class_system_thinking_in_IT', label: 'GitHub', position: 'right' },
+        { href: 'https://sthdf.systemthinking.sk', label: 'GitHub', position: 'right' },
       ],
     },
     footer: {

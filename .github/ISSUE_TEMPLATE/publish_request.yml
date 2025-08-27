@@ -1,0 +1,84 @@
+name: "Publish request"
+description: Požiadaj o zverejnenie výstupov do verejného ročníkového webu.
+title: "Publish: <STxxx alebo PRJxxx> – <krátky názov>"
+labels: ["publish-request"]
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Typ
+      options:
+        - Student
+        - Project
+    validations:
+      required: true
+
+  - type: input
+    id: identifier
+    attributes:
+      label: Identifikátor
+      description: "STxxx alebo PRJxxx (napr. ST012 alebo PRJ007)"
+      placeholder: "ST012"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lang
+    attributes:
+      label: Jazyk
+      options: [sk, en]
+      default: sk
+    validations:
+      required: true
+
+  - type: input
+    id: source_repo
+    attributes:
+      label: Zdrojový repo (owner/name)
+      description: "Tvoje privátne repo v organizácii, napr. 06-STH-Projects/st2025-ST012-assign01"
+      placeholder: "org/repo"
+    validations:
+      required: true
+
+  - type: input
+    id: source_ref
+    attributes:
+      label: Zdrojový ref (tag/branch/commit)
+      description: "Odporúčané je tagovať publish-YYYYMMDD alebo release"
+      placeholder: "publish-20250901"
+    validations:
+      required: true
+
+  - type: input
+    id: source_path
+    attributes:
+      label: Zdrojový priečinok
+      description: "Koreň exportu v študentskom repo (odporúčané: public/)"
+      placeholder: "public/"
+      value: "public/"
+    validations:
+      required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Stručný popis čo sa publikuje
+      placeholder: "About Me + Project Summary + link na prezentáciu..."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: license
+    attributes:
+      label: Licencia a súhlas
+      options:
+        - label: "Súhlasím so zverejnením obsahu pod CC BY (obsah) a MIT (kód)."
+          required: true
+
+  - type: checkboxes
+    id: files
+    attributes:
+      label: Povolené súbory
+      options:
+        - label: "Potvrdzujem, že publikujem len .md, .png, .jpg, .jpeg, .gif, .pdf a že žiadny súbor nemá viac než 15 MB."
+          required: true
