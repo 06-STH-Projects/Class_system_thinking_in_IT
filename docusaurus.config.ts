@@ -9,7 +9,7 @@ const config: Config = {
   baseUrl: '/',
   favicon: 'img/favicon.ico',
 
-  organizationName: '06-STH-Projects-Framework',
+  organizationName: '06-STH-Projects',
   projectName: 'Class_system_thinking_in_IT',
   deploymentBranch: 'gh-pages', // voliteľné, ale fajn mať
   // Viac priateľské defaulty počas migrácie
@@ -56,8 +56,7 @@ const config: Config = {
     [
       '@docusaurus/plugin-google-gtag',
       {
-        trackingID: 'G-GVPTFWRR1P'
-',
+        trackingID: 'G-GVPTFWRR1P',
         anonymizeIP: true,
         // optional: odoslať page_view aj pri route zmenách (SPA)
         // respektíve default správanie už page views posiela
@@ -67,13 +66,12 @@ const config: Config = {
   themeConfig: {
     image: 'img/logo.png',
     navbar: {
-      title: 'KNIFE',
-      logo: { alt: 'KNIFE Logo', src: 'img/logo.png' },
+      title: 'STHDF',
+      logo: { alt: 'STHDF Logo', src: 'img/logo.png' },
       items: [
-        { to: '/', label: 'Home', position: 'left' },
-        { to: '/docs', label: 'Docs (SK)', position: 'left' },
-        { to: '/en/docs', label: 'Docs (EN)', position: 'left' },
-        { href: 'https://github.com/06-STH-Projects-Framework/Class_system_thinking_in_IT', label: 'GitHub', position: 'right' },
+        { to: '/', label: 'Domov', position: 'left' },
+        { href: 'https://knifes.systemthinking.sk', label: 'KNIFE', position: 'left' },
+        { href: 'https://github.com/06-STH-Projects/Class_system_thinking_in_IT', label: 'GitHub', position: 'right' },
       ],
     },
     footer: {
